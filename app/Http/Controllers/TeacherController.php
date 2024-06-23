@@ -31,15 +31,15 @@ class TeacherController extends Controller
             return response()->json(['error' => 'Forbidden'], 403);
         }
 
-        $this->createAccessRequest($teacher);
+        $this->assignRole($teacher->email, 'teacher', 'student');
 
         return response()->json($teacher, 201);
     }
 
-    private function createAccessRequest($teacher)
+    private function assignRole($userEmail, $role, $tenant)
     {
         $client = new Client();
-        $url = "https://api.permit.io/v2/facts/{$this->projectId}/{$this->envId}/access_requests";
+        $url = "https://cloudpdp.api.permit.io/v2/facts/{$this->projectId}/{$this->envId}/role_assignments";
 
         try {
             $response = $client->post($url, [
@@ -48,13 +48,9 @@ class TeacherController extends Controller
                     'Content-Type' => 'application/json',
                 ],
                 'json' => [
-                    'access_request_details' => [
-                        'tenant' => 'default',
-                        'resource' => 'student',
-                        'resource_instance' => $teacher->id,
-                        'role' => $this->roleId,
-                    ],
-                    'reason' => 'done onboarding',
+                    'user' => $userEmail,
+                    'role' => $role,
+                    'tenant' => $tenant,
                 ],
             ]);
 
