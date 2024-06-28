@@ -89,7 +89,7 @@ class StudentController extends Controller
 
     private function checkPermission($email, $action, $resource)
     {
-        $url = "https://cloudpdp.api.permit.io/allowed";
+        $url = "http://localhost:7766/allowed";
         $payload = [
             "user" => $email,
             "action" => $action,
